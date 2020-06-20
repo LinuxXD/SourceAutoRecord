@@ -6,7 +6,10 @@
 #include "SAR.hpp"
 #include "Utils.hpp"
 
+#include <queue>
+
 class EngineDemoPlayer : public Module {
+
 public:
     Interface* s_ClientDemoPlayer = nullptr;
 
@@ -17,6 +20,8 @@ public:
     _GetPlaybackTick GetPlaybackTick = nullptr;
 
     char* DemoName = nullptr;
+    int demoQueueSize = 0; //Init the int at sar startup
+    std::queue<std::string> demoQueue;
 
 public:
     int GetTick();
@@ -24,8 +29,12 @@ public:
 
     // CDemoRecorder::StartPlayback
     DECL_DETOUR(StartPlayback, const char* filename, bool bAsTimeDemo);
+    DECL_DETOUR_COMMAND(stopdemo);
 
     bool Init() override;
     void Shutdown() override;
     const char* Name() override { return MODULE("engine"); }
 };
+
+extern Command sar_startdemos;
+extern Command sar_stopdemos;

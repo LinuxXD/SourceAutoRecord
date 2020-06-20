@@ -16,6 +16,10 @@
 #include "SAR.hpp"
 #include "Utils.hpp"
 #include "Variable.hpp"
+#include <Features\Demo\Demo.hpp>
+#include <Features\Demo\DemoParser.hpp>
+
+
 
 Variable host_framerate;
 Variable net_showmsg;
@@ -178,6 +182,20 @@ DETOUR(Engine::Frame)
     if (engine->hoststate->m_activeGame || std::strlen(engine->m_szLevelName) == 0) {
         speedrun->PostUpdate(engine->GetTick(), engine->m_szLevelName);
     }
+
+    //demoplayer
+    if (engine->demoplayer->demoQueueSize > 0 && !engine->demoplayer->IsPlaying()) {
+        DemoParser parser;
+        auto name = engine->demoplayer->demoQueue.front();
+        if (!engine->demoplayer->IsPlaying()) {
+            engine->ExecuteCommand(std::string("playdemo " + name).c_str());
+        }
+        engine->demoplayer->demoQueue.pop();
+        --engine->demoplayer->demoQueueSize;
+    } else if(engine->demoplayer->demoQueueSize == 0 && !engine->demoplayer->IsPlaying()) {
+        --engine->demoplayer->demoQueueSize;
+        sv_alternateticks.SetValue(1);
+	}
 
     return Engine::Frame(thisptr);
 }
