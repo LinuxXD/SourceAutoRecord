@@ -192,10 +192,7 @@ DETOUR(Engine::Frame)
         }
         engine->demoplayer->demoQueue.pop();
         --engine->demoplayer->demoQueueSize;
-    } else if(engine->demoplayer->demoQueueSize == 0 && !engine->demoplayer->IsPlaying()) {
-        --engine->demoplayer->demoQueueSize;
-        sv_alternateticks.SetValue(1);
-	}
+    }
 
     return Engine::Frame(thisptr);
 }
