@@ -6,10 +6,9 @@
 #include "SAR.hpp"
 #include "Utils.hpp"
 
-#include <queue>
+#include <map>
 
 class EngineDemoPlayer : public Module {
-
 public:
     Interface* s_ClientDemoPlayer = nullptr;
 
@@ -20,12 +19,14 @@ public:
     _GetPlaybackTick GetPlaybackTick = nullptr;
 
     char* DemoName = nullptr;
-    int demoQueueSize = 0; //Init the int at sar startup
-    std::queue<std::string> demoQueue;
+    int demoQueueSize = false;
+    int currentDemoID = false;
+    std::vector<std::string> demoQueue;
 
 public:
     int GetTick();
     bool IsPlaying();
+    void ClearDemoQueue();
 
     // CDemoRecorder::StartPlayback
     DECL_DETOUR(StartPlayback, const char* filename, bool bAsTimeDemo);
@@ -37,4 +38,6 @@ public:
 };
 
 extern Command sar_startdemos;
-extern Command sar_stopdemos;
+extern Command sar_startdemosfolder;
+extern Command sar_skiptodemo;
+extern Command sar_nextdemo;
